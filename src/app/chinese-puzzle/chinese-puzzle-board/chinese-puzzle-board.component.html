@@ -1,57 +1,93 @@
-<div class="w-screen h-screen flex flex-col justify-center items-center bg-gray-200 dark:bg-gray-800">
-  <div class="w-full flex justify-center items-center ">
+<div
+  class="flex h-screen w-screen flex-col items-center justify-center bg-gray-200 dark:bg-gray-800"
+>
+  <div class="flex w-full items-center justify-center">
     <div class="text-gray-800 dark:text-gray-200">当前棋局：</div>
-    <select [ngModel]="dataSetName()" (ngModelChange)="chnageDataSet($event)"
-      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    <select
+      [ngModel]="dataSetName()"
+      (ngModelChange)="chnageDataSet($event)"
+      class="block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+    >
       @for (item of dataSetNames(); track $index) {
-      <option value="{{item}}">{{item}}</option>
+        <option value="{{ item }}">{{ item }}</option>
       }
     </select>
   </div>
-  <div class="mt-5 text-gray-800 dark:text-gray-200 w-full flex justify-center items-center">
-    <div class="mx-5">当前步数： {{steps}}</div>
-    <div class="mx-5">是否完成：{{finished()?'✅':'❌'}}</div>
+  <div
+    class="mt-5 flex w-full items-center justify-center text-gray-800 dark:text-gray-200"
+  >
+    <div class="mx-5">当前步数： {{ steps }}</div>
+    <div class="mx-5">是否完成：{{ finished() ? "✅" : "❌" }}</div>
   </div>
   <div
-    [ngStyle]="{width: boardWidth * cellSize + cellOffset + 'px', height: boardHeight * cellSize + cellOffset + 'px'}"
-    class="relative border-[2px] border-solid border-gray-800 border-b-0 dark:border-gray-200">
-    <div cdkDrag *ngFor="let piece of pieces()"
-      class="absolute flex justify-center items-center rounded-sm bg-cover bg-center bg-orange-200 bg-opacity-50 bg-blend-multiply shadow-lg dark:bg-opacity-50 text-gray-800 dark:text-gray-200 border border-solid border-gray-800 dark:border-gray-200 text-xl font-bold cursor-pointer box-border backdrop-blur-md z-10"
+    [ngStyle]="{
+      width: boardWidth * cellSize + cellOffset + 'px',
+      height: boardHeight * cellSize + cellOffset + 'px',
+    }"
+    class="relative border-[2px] border-b-0 border-solid border-gray-800 dark:border-gray-200"
+  >
+    <div
+      cdkDrag
+      *ngFor="let piece of pieces()"
+      class="absolute z-10 box-border flex cursor-pointer items-center justify-center rounded-sm border border-solid border-gray-800 bg-orange-200 bg-opacity-50 bg-cover bg-center text-xl font-bold text-gray-800 bg-blend-multiply shadow-lg backdrop-blur-md dark:border-gray-200 dark:bg-opacity-50 dark:text-gray-200"
       [ngStyle]="{
-        'background-image': 'url('+piece.img+')',
+        'background-image': 'url(' + piece.img + ')',
         width: piece.width * cellSize + 1 + 'px',
         height: piece.height * cellSize + 1 + 'px',
         top: piece.y * cellSize + 'px',
-        left: piece.x * cellSize + 'px'
-      }" (cdkDragStarted)="onDragStart(piece, $event)" (cdkDragEnded)="onDragEnd($event)">
-    </div>
-    <div *ngFor="let p of pieces()" class="absolute flex justify-center items-center cursor-pointer" [ngStyle]="{
+        left: piece.x * cellSize + 'px',
+      }"
+      (cdkDragStarted)="onDragStart(piece, $event)"
+      (cdkDragEnded)="onDragEnd($event)"
+    ></div>
+    <div
+      *ngFor="let p of pieces()"
+      class="absolute flex cursor-pointer items-center justify-center"
+      [ngStyle]="{
         width: p.width * cellSize + 'px',
         height: p.height * cellSize + 'px',
         top: p.y * cellSize + 'px',
-        left: p.x * cellSize + 'px'
-      }" [ngClass]="{'hidden':piece?.id!==p.id}">
-      <div [ngClass]="{'hidden': !canMoveDirections.includes(Direction.Up)}"
-        class="absolute top-0 w-full h-5 flex justify-center items-center cursor-pointer text-3xl"
-        (click)="movePiece(p, Direction.Up)">️⬆️️</div>
-      <div [ngClass]="{'hidden': !canMoveDirections.includes(Direction.Down)}"
-        class="absolute bottom-0 w-full h-5 flex justify-center items-center cursor-pointer text-3xl"
-        (click)="movePiece(p, Direction.Down)">⬇️</div>
-      <div [ngClass]="{'hidden': !canMoveDirections.includes(Direction.Left)}"
-        class="absolute left-0 h-full w-5 flex justify-center items-center cursor-pointer text-3xl"
-        (click)="movePiece(p, Direction.Left)">⬅️</div>
-      <div [ngClass]="{'hidden': !canMoveDirections.includes(Direction.Right)}"
-        class="absolute right-0 h-full w-5 flex justify-center items-center cursor-pointer text-3xl"
-        (click)="movePiece(p, Direction.Right)">➡️</div>
+        left: p.x * cellSize + 'px',
+      }"
+      [ngClass]="{ hidden: piece?.id !== p.id }"
+    >
+      <div
+        [ngClass]="{ hidden: !canMoveDirections.includes(Direction.Up) }"
+        class="absolute top-0 flex h-5 w-full cursor-pointer items-center justify-center text-3xl"
+        (click)="movePiece(p, Direction.Up)"
+      >
+        ️⬆️️
+      </div>
+      <div
+        [ngClass]="{ hidden: !canMoveDirections.includes(Direction.Down) }"
+        class="absolute bottom-0 flex h-5 w-full cursor-pointer items-center justify-center text-3xl"
+        (click)="movePiece(p, Direction.Down)"
+      >
+        ⬇️
+      </div>
+      <div
+        [ngClass]="{ hidden: !canMoveDirections.includes(Direction.Left) }"
+        class="absolute left-0 flex h-full w-5 cursor-pointer items-center justify-center text-3xl"
+        (click)="movePiece(p, Direction.Left)"
+      >
+        ⬅️
+      </div>
+      <div
+        [ngClass]="{ hidden: !canMoveDirections.includes(Direction.Right) }"
+        class="absolute right-0 flex h-full w-5 cursor-pointer items-center justify-center text-3xl"
+        (click)="movePiece(p, Direction.Right)"
+      >
+        ➡️
+      </div>
     </div>
     <!-- 下边框，出口 -->
-    <div class="absolute h-[2px] bottom-0 w-full">
+    <div class="absolute bottom-0 h-[2px] w-full">
       <div
-        class="absolute left-0 bottom-0 w-1/4 h-full border-b-[2px] border-solid border-gray-800 dark:border-gray-200">
-      </div>
+        class="absolute bottom-0 left-0 h-full w-1/4 border-b-[2px] border-solid border-gray-800 dark:border-gray-200"
+      ></div>
       <div
-        class="absolute right-0 bottom-0 w-1/4 h-full border-b-[2px] border-solid border-gray-800 dark:border-gray-200">
-      </div>
+        class="absolute bottom-0 right-0 h-full w-1/4 border-b-[2px] border-solid border-gray-800 dark:border-gray-200"
+      ></div>
     </div>
   </div>
 </div>
