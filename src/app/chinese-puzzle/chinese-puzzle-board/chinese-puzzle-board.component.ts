@@ -1,9 +1,11 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
+import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
+import { timer } from 'rxjs';
+
 import { ChinesePuzzleStore } from '../chinese-puzzle.store';
 import { ToolsService } from '../../common/tools.service';
 import { Direction, Piece } from '../chinese-puzzle.type';
-import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
-import { timer } from 'rxjs';
+import { ImagePreloaderService } from '../image-preloader.service';
 
 @Component({
   selector: 'app-chinese-puzzle-board',
@@ -12,9 +14,10 @@ import { timer } from 'rxjs';
   templateUrl: './chinese-puzzle-board.component.html',
   styleUrl: './chinese-puzzle-board.component.less'
 })
-export class ChinesePuzzleBoardComponent {
+export class ChinesePuzzleBoardComponent implements OnInit {
   private store = inject(ChinesePuzzleStore);
   private tools = inject(ToolsService);
+  private imagePreLoader = inject(ImagePreloaderService);
   // 单元格尺寸
   cellSize = 150;
   // 由于边框问题，这里加一个偏移量
@@ -39,6 +42,7 @@ export class ChinesePuzzleBoardComponent {
 
   steps = 0;
 
+  resourceLoading = false;
   showSuccess = false;
 
   constructor() {
@@ -54,6 +58,7 @@ export class ChinesePuzzleBoardComponent {
 
   ngOnInit() {
     this.store.initBoard();
+    this.preLoadImage();
   }
 
   // 检查是否可以移动棋子
@@ -199,5 +204,22 @@ export class ChinesePuzzleBoardComponent {
   chnageDataSet(dataSetName: string) {
     this.store.chnageDataSet(dataSetName);
     this.steps = 0;
+  }
+
+  private preLoadImage() {
+    this.resourceLoading = true;
+    const imageUrls = this.pieces().filter(p => !!p.img).map(piece => piece.img!);
+    if (!imageUrls || imageUrls.length == 0) {
+      return;
+    }
+
+    this.imagePreLoader.preloadImages(imageUrls).then(success => {
+      if (success) {
+        this.resourceLoading = false;
+        console.log('所有图片已成功加载');
+      } else {
+        console.error('图片预加载失败');
+      }
+    })
   }
 }
