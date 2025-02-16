@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { ChinesePuzzleStore } from '../chinese-puzzle.store';
 import { ToolsService } from '../../common/tools.service';
 import { Direction, Piece } from '../chinese-puzzle.type';
 import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-chinese-puzzle-board',
@@ -37,6 +38,19 @@ export class ChinesePuzzleBoardComponent {
   startPosition: { x: number, y: number } | null = null;
 
   steps = 0;
+
+  showSuccess = false;
+
+  constructor() {
+    effect(() => {
+      if (this.finished()) {
+        this.showSuccess = true;
+        timer(2500).subscribe(() => {
+          this.showSuccess = false;
+        });
+      }
+    });
+  }
 
   ngOnInit() {
     this.store.initBoard();
