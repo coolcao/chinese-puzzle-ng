@@ -61,7 +61,7 @@ export class ChinesePuzzleStore {
     this._pieces.set(this.tools.deepClone(pieces));
   }
 
-  chnageDataSet(dataSetName: string) {
+  changeDataSet(dataSetName: string) {
     this._dataSetName.set(dataSetName);
     this._pieces.set(this.tools.deepClone(dataSet[dataSetName]));
     this.initBoard();

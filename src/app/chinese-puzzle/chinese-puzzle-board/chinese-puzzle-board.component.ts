@@ -26,6 +26,8 @@ export class ChinesePuzzleBoardComponent implements OnInit {
   Direction = Direction;
   canMoveDirections: Direction[] = [];
 
+  showInstructions = false;
+
 
   boardWidth = this.store.boardWidth();
   boardHeight = this.store.boardHeight();
@@ -201,8 +203,8 @@ export class ChinesePuzzleBoardComponent implements OnInit {
     this.resetClickOrDragState();
   }
 
-  chnageDataSet(dataSetName: string) {
-    this.store.chnageDataSet(dataSetName);
+  changeDataSet(dataSetName: string) {
+    this.store.changeDataSet(dataSetName);
     this.steps = 0;
   }
 
