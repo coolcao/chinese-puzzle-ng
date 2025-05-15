@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { timer } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { ImagePreloaderService } from '../image-preloader.service';
   templateUrl: './chinese-puzzle-board.component.html',
   styleUrl: './chinese-puzzle-board.component.less'
 })
-export class ChinesePuzzleBoardComponent implements OnInit {
+export class ChinesePuzzleBoardComponent implements OnInit, OnDestroy {
   private store = inject(ChinesePuzzleStore);
   private tools = inject(ToolsService);
   private imagePreLoader = inject(ImagePreloaderService);
@@ -58,9 +58,57 @@ export class ChinesePuzzleBoardComponent implements OnInit {
     });
   }
 
+  // 监听屏幕大小变化
+  private resizeObserver: ResizeObserver | null = null;
+
+  // 初始化屏幕大小监听
+  private initResizeObserver() {
+    // 获取当前视窗大小
+    const updateCellSize = () => {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      // 根据屏幕大小动态计算单元格尺寸
+      // 这里取视窗宽度和高度的较小值的1/6作为单元格尺寸
+      // 确保棋盘在各种屏幕尺寸下都能完整显示
+      const minDimension = Math.min(viewportWidth, viewportHeight);
+
+      this.cellSize = Math.floor(minDimension / 5);
+
+      // 确保最小尺寸不小于75px
+      this.cellSize = Math.max(this.cellSize, 75);
+      // 确保最大尺寸不超过150px
+      this.cellSize = Math.min(this.cellSize, 150);
+    };
+
+    // 初始设置
+    updateCellSize();
+
+    // 监听resize事件
+    window.addEventListener('resize', updateCellSize);
+
+    // 使用ResizeObserver监听元素大小变化
+    this.resizeObserver = new ResizeObserver(() => {
+      updateCellSize();
+    });
+  }
+
+  // 组件销毁时清理监听器
+  private destroyResizeObserver() {
+    window.removeEventListener('resize', () => { });
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+  }
+
   ngOnInit() {
     this.store.initBoard();
     this.preLoadImage();
+    this.initResizeObserver();
+  }
+  ngOnDestroy(): void {
+    this.destroyResizeObserver();
   }
 
   // 检查是否可以移动棋子

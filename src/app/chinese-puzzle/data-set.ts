@@ -63,4 +63,17 @@ export const dataSet: Record<string, Piece[]> = {
     { ...zu4, x: 2, y: 3 },
     { ...huangzhong, x: 3, y: 3 }
   ],
+  '简易': [
+    { ...zu1, x: 0, y: 0 },
+    // { ...caocao, x: 1, y: 0 },
+    { ...caocao, x: 1, y: 2 },
+    { ...zu2, x: 3, y: 0 },
+    { ...zhangfei, x: 0, y: 1 },
+    { ...guanyu, x: 1, y: 0 },
+    { ...zhaoyun, x: 3, y: 1 },
+    { ...machao, x: 0, y: 3 },
+    { ...zu3, x: 1, y: 1 },
+    { ...zu4, x: 2, y: 1 },
+    { ...huangzhong, x: 3, y: 3 }
+  ],
 };
